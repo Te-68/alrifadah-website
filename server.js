@@ -7,276 +7,215 @@ app.use(express.urlencoded({ extended: true }));
 
 let feedbackList = [];
 
-// محتوى الموقع الثنائي اللغة والفاخر جداً
-const siteContent = {
-    ar: {
-        name: "الرفادة مسار الضيافة للسفر والسياحة",
-        subtitle: "AlRifadah Hospitality for Tourism and Travel",
-        tagline: "الريادة المطلقة في السفر والضيافة الفاخرة",
-        about_title: "من نحن",
-        about_text: "نحن شركة رائدة في قطاع السفر والسياحة والضيافة، نقدم خدمات استثنائية بمعايير عالمية تجمع بين الأصالة والاحترافية الفائقة لتلبية تطلعات نخب عملائنا.",
-        mission_title: "رسالة الشركة",
-        mission_text: "تقديم تجارب سفر وضيافة ملكية لا تُنسى، بمعايير جودة وموثوقية لا تضاهى، وبما يعكس أرقى مستويات الضيافة السعودية.",
-        services_title: "خدماتنا الملكية الفاخرة",
-        services_subtitle: "تسع خدمات رئيسية مصممة خصيصاً لتقديم تجربة سفر وضيافة متكاملة واستثنائية.",
-        structure_title: "الهيكلة التنظيمية للشركة",
-        structure_subtitle: "الإدارات والأقسام الإثنا عشر المعتمدة وفق أعلى معايير الحوكمة المؤسسية.",
-        feedback_title: "مقياس رضا العملاء",
-        feedback_desc: "رأيك هو بوصلتنا نحو التميز المستمر. نرجو تقييم تجربتكم الملكية معنا:"
-    },
-    en: {
-        name: "AlRifadah Hospitality for Tourism & Travel",
-        subtitle: "الرفادة مسار الضيافة للسفر والسياحة",
-        tagline: "Absolute Leadership in Luxury Travel & Hospitality",
-        about_title: "About Us",
-        about_text: "We are a premier company in travel, tourism, and hospitality, delivering exceptional global standards combining heritage and supreme professionalism.",
-        mission_title: "Our Mission",
-        mission_text: "Delivering unforgettable royal travel and hospitality experiences with unmatched quality, reflecting the highest standards of hospitality.",
-        services_title: "Our Luxury Services",
-        services_subtitle: "Nine core services meticulously crafted to provide a comprehensive and exceptional travel experience.",
-        structure_title: "Organizational Structure",
-        structure_subtitle: "The twelve approved departments structured under elite corporate governance.",
-        feedback_title: "Customer Satisfaction Index",
-        feedback_desc: "Your opinion guides our continuous excellence. Please evaluate your royal experience:"
-    }
-};
-
-// الخدمات التسع مع الصور الفاخرة والواقعية المرخصة
-const servicesList = [
-    { 
-        id: 1, 
-        image: "https://images.unsplash.com/photo-1540555700478-4be289fbecef?auto=format&fit=crop&w=800&q=80",
-        ar: { title: "1. الاستقبال (Meet & Assist)", desc: "خدمات استقبال ملكية منظمة لتوفير بداية مريحة وفخمة للرحلة منذ لحظة الوصول." },
-        en: { title: "1. Meet & Assist", desc: "Royal reception services ensuring a comfortable and luxurious start upon arrival." }
-    },
-    { 
-        id: 2, 
-        image: "https://images.unsplash.com/photo-1436491865332-7a61a109cc05?auto=format&fit=crop&w=800&q=80",
-        ar: { title: "2. التوديع (Departure Assistance)", desc: "مساندة راقية للمسافرين لتنظيم المغادرة وتسهيل كافة إجراءات التنقل بكل راحة." },
-        en: { title: "2. Departure Assistance", desc: "Elite departure support ensuring seamless terminal mobility and coordination." }
-    },
-    { 
-        id: 3, 
-        image: "https://images.unsplash.com/photo-1436491865332-7a61a109cc05?auto=format&fit=crop&w=800&q=80",
-        ar: { title: "3. الطيران (Flight Services)", desc: "خدمات حصرية لتنظيم السفر الجوي وتوفير أفضل خيارات الرحلات الفاخرة." },
-        en: { title: "3. Flight Services", desc: "Exclusive air travel organization and premium flight booking options." }
-    },
-    { 
-        id: 4, 
-        image: "https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=800&q=80",
-        ar: { title: "4. الفنادق (Hotels & Accommodation)", desc: "حجوزات في أرقى الفنادق العالمية والمحلية لتلبية تطلعات الراحة والاستجمام." },
-        en: { title: "4. Hotels & Accommodation", desc: "Reservations in world-class luxury hotels tailored to supreme comfort." }
-    },
-    { 
-        id: 5, 
-        image: "https://images.unsplash.com/photo-1549399542-7e3f8b79c341?auto=format&fit=crop&w=800&q=80",
-        ar: { title: "5. وسائل النقل (Transportation)", desc: "أسطول من أحدث السيارات الفاخرة والمركبات المخصصة لنقل كبار الشخصيات." },
-        en: { title: "5. Transportation", desc: "A fleet of ultra-luxury vehicles dedicated to VIP passenger transit." }
-    },
-    { 
-        id: 6, 
-        image: "https://images.unsplash.com/photo-1584646098378-0874589d76b1?auto=format&fit=crop&w=800&q=80",
-        ar: { title: "6. السياحة الداخلية (Domestic Tourism)", desc: "تجارب سياحية ساحرة لاستكشاف التراث العريق والطبيعة الخلابة في المملكة." },
-        en: { title: "6. Domestic Tourism", desc: "Enchanting tourism experiences exploring the Kingdom's heritage and nature." }
-    },
-    { 
-        id: 7, 
-        image: "https://images.unsplash.com/photo-1488646953014-85cb44e25828?auto=format&fit=crop&w=800&q=80",
-        ar: { title: "7. السياحة الخارجية (International Tourism)", desc: "برامج سياحية عالمية مصممة خصيصاً لاستكشاف أجمل الوجهات حول العالم." },
-        en: { title: "7. International Tourism", desc: "Customized global tourism programs to explore the world's finest destinations." }
-    },
-    { 
-        id: 8, 
-        image: "https://images.unsplash.com/photo-1524178232363-1fb2b075b655?auto=format&fit=crop&w=800&q=80",
-        ar: { title: "8. تعليم العربية لغير الناطقين بها", desc: "برامج أكاديمية متقدمة لتعليم اللغة العربية بأحدث الأساليب لغير الناطقين بها." },
-        en: { title: "8. Arabic for Non-Native Speakers", desc: "Advanced academic programs teaching Arabic with modern methodologies." }
-    },
-    { 
-        id: 9, 
-        image: "https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?auto=format&fit=crop&w=800&q=80",
-        ar: { title: "9. السياحة العلاجية (Medical Tourism)", desc: "تنسيق متكامل للرحلات العلاجية وأرقى خدمات الرعاية الصحية بالتعاون مع المنشآت الكبرى." },
-        en: { title: "9. Medical Tourism", desc: "Comprehensive coordination for medical trips and elite healthcare services." }
-    }
-];
-
-const departmentsList = [
-    "1. الإدارة العليا (Top Management)",
-    "2. الإدارة التنفيذية (Executive Management)",
-    "3. إدارة الموارد البشرية (Human Resources)",
-    "4. الإدارة المالية والمحاسبة (Finance & Accounting)",
-    "5. إدارة المبيعات (Sales Department)",
-    "6. إدارة التسويق (Marketing Department)",
-    "7. إدارة خدمة العملاء (Customer Service)",
-    "8. إدارة العمليات (Operations Department)",
-    "9. إدارة المشتريات (Procurement Department)",
-    "10. تقنية المعلومات (IT Department)",
-    "11. الإدارة القانونية والامتثال (Legal & Compliance)",
-    "12. الجودة والتطوير (Quality & Development)"
-];
-
-// الصفحة الرئيسية
+// الصفحة الرئيسية بالتصميم الفاخر والصور الاحترافية
 app.get('/', (req, res) => {
     const lang = req.query.lang === 'en' ? 'en' : 'ar';
-    const t = siteContent[lang];
-    const dir = lang === 'ar' ? 'rtl' : 'ltr';
+    const isAr = lang === 'ar';
 
     res.send(`
     <!DOCTYPE html>
-    <html lang="${lang}" dir="${dir}">
+    <html lang="${lang}" dir="${isAr ? 'rtl' : 'ltr'}">
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>${t.name}</title>
+        <title>${isAr ? 'الرفادة مسار الضيافة للسفر والسياحة' : 'AlRifadah Hospitality for Tourism and Travel'}</title>
         <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-        <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;800;900&display=swap" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet">
         <style>
             body { font-family: 'Cairo', sans-serif; background-color: #F8F9FA; color: #0A1F18; }
             .brand-green { background-color: #0F4C3A; }
             .brand-green-text { color: #0F4C3A; }
-            .brand-gold { color: #C5A059; }
             .luxury-gradient { background: linear-gradient(135deg, #0F4C3A 0%, #07261D 100%); }
-            .card-hover:hover { transform: translateY(-8px); box-shadow: 0 30px 40px -15px rgba(15, 76, 58, 0.2); }
+            .card-hover:hover { transform: translateY(-6px); box-shadow: 0 25px 30px -10px rgba(15, 76, 58, 0.2); }
         </style>
     </head>
     <body class="min-h-screen flex flex-col">
 
-        <!-- شريط التنقل الملكي -->
-        <header class="bg-white/95 backdrop-blur-md shadow-md sticky top-0 z-50 border-b border-emerald-900/10">
+        <!-- الهيدر الشعار الرسمي -->
+        <header class="bg-white/95 backdrop-blur-md shadow-md sticky top-0 z-50 border-b border-gray-100">
             <div class="container mx-auto px-6 py-4 flex justify-between items-center">
                 <div class="flex items-center gap-4">
-                    <!-- شعار الشركة الرسمي الدمج الأنيق -->
-                    <div class="w-14 h-14 bg-white rounded-2xl p-1.5 shadow-md border border-emerald-900/10 flex items-center justify-center">
-                        <span class="brand-green-text font-black text-2xl">الرفادة</span>
-                    </div>
+                    <div class="w-12 h-12 brand-green rounded-2xl flex items-center justify-center text-white font-black text-xl shadow">الرفادة</div>
                     <div>
-                        <h1 class="font-black text-base md:text-lg brand-green-text tracking-tight">${t.name}</h1>
-                        <p class="text-[10px] text-gray-500 tracking-widest uppercase">${t.subtitle}</p>
+                        <h1 class="font-black text-sm md:text-base brand-green-text tracking-tight">
+                            ${isAr ? 'الرفادة مسار الضيافة للسفر والسياحة' : 'AlRifadah Hospitality for Tourism and Travel'}
+                        </h1>
+                        <p class="text-[10px] text-gray-500 tracking-widest uppercase">AlRifadah Hospitality for Tourism & Travel</p>
                     </div>
                 </div>
-                <div class="flex items-center gap-4">
-                    <nav class="hidden md:flex gap-7 font-semibold text-gray-700 text-sm">
-                        <a href="#about" class="hover:brand-green-text transition">${lang === 'ar' ? 'من نحن' : 'About'}</a>
-                        <a href="#services" class="hover:brand-green-text transition">${lang === 'ar' ? 'الخدمات الفاخرة' : 'Services'}</a>
-                        <a href="#structure" class="hover:brand-green-text transition">${lang === 'ar' ? 'الهيكلة التنظيمية' : 'Structure'}</a>
-                        <a href="#feedback" class="hover:brand-green-text transition">${lang === 'ar' ? 'التقييمات' : 'Feedback'}</a>
-                    </nav>
-                    <a href="/?lang=${lang === 'ar' ? 'en' : 'ar'}" class="bg-emerald-50 hover:bg-emerald-100 brand-green-text font-bold text-xs px-4 py-2.5 rounded-xl transition border border-emerald-900/20 shadow-sm">
-                        ${lang === 'ar' ? 'English 🇺🇸' : 'العربية 🇸🇦'}
+                <div class="flex items-center gap-3">
+                    <a href="/?lang=${isAr ? 'en' : 'ar'}" class="bg-emerald-50 hover:bg-emerald-100 brand-green-text font-bold text-xs px-3.5 py-2 rounded-xl transition border border-emerald-900/10">
+                        ${isAr ? 'English 🇺🇸' : 'العربية 🇸🇦'}
                     </a>
-                    <a href="/admin" class="text-xs bg-[#0A1F18] text-white font-bold px-4 py-2.5 rounded-xl hover:bg-[#0F4C3A] transition shadow-lg">
-                        ${lang === 'ar' ? 'لوحة الإدارة' : 'Admin'}
+                    <a href="/admin" class="text-xs bg-[#0A1F18] text-white font-bold px-4 py-2.5 rounded-xl hover:bg-[#0F4C3A] transition shadow">
+                        ${isAr ? 'لوحة الإدارة' : 'Admin'}
                     </a>
                 </div>
             </div>
         </header>
 
-        <!-- واجهة البطل الأسطورية -->
-        <section class="luxury-gradient text-white py-32 px-6 text-center relative overflow-hidden shadow-2xl">
-            <div class="absolute inset-0 opacity-10 bg-[radial-gradient(#C5A059_1px,transparent_1px)] [background-size:24px_24px]"></div>
+        <!-- الهيرو الفخم -->
+        <section class="luxury-gradient text-white py-24 px-6 text-center shadow-2xl relative overflow-hidden">
             <div class="max-w-4xl mx-auto space-y-6 relative z-10">
-                <span class="bg-[#C5A059]/20 text-[#FFD700] border border-[#C5A059]/40 px-6 py-2 rounded-full text-xs font-extrabold tracking-widest uppercase shadow-sm">✨ ${t.tagline}</span>
-                <h1 class="text-4xl md:text-6xl font-black leading-tight tracking-tight">${t.name}</h1>
-                <p class="text-lg md:text-xl text-gray-200 leading-relaxed font-light max-w-2xl mx-auto">${t.about_text}</p>
-                <div class="pt-8 flex justify-center gap-5">
-                    <a href="#services" class="bg-[#C5A059] text-gray-950 font-extrabold px-9 py-4 rounded-2xl shadow-xl hover:bg-amber-400 transition text-sm">${lang === 'ar' ? 'استكشف الخدمات الملكية' : 'Explore Luxury Services'}</a>
-                    <a href="#about" class="border-2 border-white/80 text-white font-bold px-9 py-4 rounded-2xl hover:bg-white/10 transition text-sm">${lang === 'ar' ? 'تعرف على رسالتنا' : 'Our Mission'}</a>
-                </div>
+                <span class="bg-[#C5A059]/20 text-[#FFD700] border border-[#C5A059]/40 px-5 py-2 rounded-full text-xs font-extrabold tracking-widest uppercase">
+                    ✨ ${isAr ? 'الريادة المطلقة في السفر والضيافة الفاخرة' : 'Absolute Leadership in Luxury Travel'}
+                </span>
+                <h1 class="text-3xl md:text-5xl font-black leading-tight">
+                    ${isAr ? 'الرفادة مسار الضيافة للسفر والسياحة' : 'AlRifadah Hospitality for Tourism and Travel'}
+                </h1>
+                <p class="text-base md:text-lg text-gray-200 leading-relaxed font-light max-w-2xl mx-auto">
+                    ${isAr ? 'نحن شركة رائدة في قطاع السفر والسياحة والضيافة، نقدم خدمات استثنائية بمعايير عالمية تجمع بين الأصالة والاحترافية الفائقة.' : 'A premier company providing integrated travel, tourism, and hospitality services with world-class standards.'}
+                </p>
             </div>
         </section>
 
         <!-- قسم من نحن والرسالة -->
-        <section id="about" class="container mx-auto px-6 py-28">
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-10 items-stretch">
-                <div class="bg-white p-12 rounded-3xl shadow-xl border border-gray-100 space-y-6 flex flex-col justify-between relative overflow-hidden">
-                    <div class="absolute top-0 right-0 w-2 h-full brand-green"></div>
-                    <div>
-                        <h2 class="text-3xl font-black brand-green-text mb-4">${t.about_title}</h2>
-                        <p class="text-gray-700 leading-relaxed text-base">${t.about_text}</p>
-                    </div>
-                    <div class="pt-4 border-t border-gray-100 text-xs text-gray-400 font-bold uppercase tracking-wider">${t.subtitle}</div>
+        <section class="container mx-auto px-6 py-20">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div class="bg-white p-8 rounded-3xl shadow-xl border border-gray-100 space-y-4">
+                    <h2 class="text-2xl font-black brand-green-text">${isAr ? 'من نحن' : 'About Us'}</h2>
+                    <p class="text-gray-700 leading-relaxed text-sm md:text-base">
+                        ${isAr ? 'شركة الرفادة مسار الضيافة للسفر والسياحة شركة رائدة توفر خدمات السفر والضيافة الشاملة مع حلول مميزة ومخصصة للعملاء.' : 'AlRifadah Hospitality is a leading travel and hospitality company providing comprehensive services.'}
+                    </p>
                 </div>
-                <div class="luxury-gradient p-12 rounded-3xl text-white space-y-6 shadow-2xl flex flex-col justify-between relative overflow-hidden">
-                    <div class="absolute top-0 right-0 w-2 h-full bg-[#C5A059]"></div>
-                    <div>
-                        <h2 class="text-3xl font-black mb-4 text-white">${t.mission_title}</h2>
-                        <p class="text-gray-100 leading-relaxed text-base">${t.mission_text}</p>
-                    </div>
-                    <div class="pt-4 border-t border-white/20 text-xs text-amber-200 font-bold">${lang === 'ar' ? 'الالتزام بالتميز الملكي والريادة العالمية' : 'Commitment to Royal Excellence'}</div>
+                <div class="luxury-gradient p-8 rounded-3xl text-white space-y-4 shadow-xl">
+                    <h2 class="text-2xl font-black text-white">${isAr ? 'رسالة الشركة' : 'Our Mission'}</h2>
+                    <p class="text-gray-100 leading-relaxed text-sm md:text-base">
+                        ${isAr ? 'تقديم خدمات سفر وضيافة استثنائية بمعايير عالمية تجمع بين الأصالة والاحترافية.' : 'Delivering exceptional travel and hospitality services with world-class standards.'}
+                    </p>
                 </div>
             </div>
         </section>
 
-        <!-- الخدمات الفاخرة مع الصور العالية الجودة -->
-        <section id="services" class="bg-[#EAEFEA] py-28 px-6">
-            <div class="container mx-auto space-y-14">
-                <div class="text-center max-w-2xl mx-auto space-y-3">
-                    <h2 class="text-3xl md:text-5xl font-black brand-green-text">${t.services_title}</h2>
-                    <p class="text-gray-600 text-base">${t.services_subtitle}</p>
+        <!-- الخدمات التسع بالصور -->
+        <section class="bg-[#EAEFEA] py-20 px-6">
+            <div class="container mx-auto space-y-10">
+                <div class="text-center max-w-xl mx-auto space-y-2">
+                    <h2 class="text-3xl font-black brand-green-text">${isAr ? 'خدماتنا الفاخرة' : 'Our Luxury Services'}</h2>
+                    <p class="text-gray-600 text-sm">${isAr ? 'تسع خدمات رئيسية صممت بعناية لتوفير تجربة سفر متكاملة' : 'Nine core services meticulously crafted'}</p>
                 </div>
 
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                    ${servicesList.map(s => `
-                        <div class="bg-white rounded-3xl overflow-hidden shadow-lg border border-emerald-900/10 card-hover transition duration-500 flex flex-col justify-between">
-                            <div class="h-56 overflow-hidden relative">
-                                <img src="${s.image}" alt="${s[lang].title}" class="w-full h-full object-cover transition duration-700 hover:scale-110">
-                                <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
-                                <span class="absolute bottom-4 right-4 bg-[#0F4C3A] text-white text-xs font-bold px-3 py-1.5 rounded-xl shadow">${lang === 'ar' ? 'خدمة فاخرة' : 'Luxury Service'}</span>
-                            </div>
-                            <div class="p-8 space-y-3 flex-grow flex flex-col justify-between">
-                                <h3 class="text-xl font-extrabold brand-green-text">${s[lang].title}</h3>
-                                <p class="text-gray-600 text-sm leading-relaxed">${s[lang].desc}</p>
-                            </div>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <!-- 1 -->
+                    <div class="bg-white rounded-3xl overflow-hidden shadow-lg border border-gray-100 card-hover transition duration-300">
+                        <img src="https://images.unsplash.com/photo-1540555700478-4be289fbecef?auto=format&fit=crop&w=600&q=80" class="w-full h-48 object-cover">
+                        <div class="p-6 space-y-2">
+                            <h3 class="text-lg font-extrabold brand-green-text">${isAr ? '1. الاستقبال (Meet & Assist)' : '1. Meet & Assist'}</h3>
+                            <p class="text-gray-600 text-xs leading-relaxed">${isAr ? 'خدمات استقبال منظمة لتوفير بداية مريحة وفخمة للرحلة.' : 'Organized reception services ensuring a comfortable start.'}</p>
                         </div>
-                    `).join('')}
+                    </div>
+                    <!-- 2 -->
+                    <div class="bg-white rounded-3xl overflow-hidden shadow-lg border border-gray-100 card-hover transition duration-300">
+                        <img src="https://images.unsplash.com/photo-1436491865332-7a61a109cc05?auto=format&fit=crop&w=600&q=80" class="w-full h-48 object-cover">
+                        <div class="p-6 space-y-2">
+                            <h3 class="text-lg font-extrabold brand-green-text">${isAr ? '2. التوديع (Departure Assistance)' : '2. Departure Assistance'}</h3>
+                            <p class="text-gray-600 text-xs leading-relaxed">${isAr ? 'مساندة للمسافرين لتنظيم المغادرة وتسهيل كافة الإجراءات.' : 'Elite departure support ensuring seamless terminal mobility.'}</p>
+                        </div>
+                    </div>
+                    <!-- 3 -->
+                    <div class="bg-white rounded-3xl overflow-hidden shadow-lg border border-gray-100 card-hover transition duration-300">
+                        <img src="https://images.unsplash.com/photo-1508873696983-2df515122519?auto=format&fit=crop&w=600&q=80" class="w-full h-48 object-cover">
+                        <div class="p-6 space-y-2">
+                            <h3 class="text-lg font-extrabold brand-green-text">${isAr ? '3. الطيران (Flight Services)' : '3. Flight Services'}</h3>
+                            <p class="text-gray-600 text-xs leading-relaxed">${isAr ? 'خدمات تنظم السفر الجوي وتوفر خيارات الرحلات المناسبة.' : 'Air travel organization and premium flight options.'}</p>
+                        </div>
+                    </div>
+                    <!-- 4 -->
+                    <div class="bg-white rounded-3xl overflow-hidden shadow-lg border border-gray-100 card-hover transition duration-300">
+                        <img src="https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=600&q=80" class="w-full h-48 object-cover">
+                        <div class="p-6 space-y-2">
+                            <h3 class="text-lg font-extrabold brand-green-text">${isAr ? '4. الفنادق (Hotels & Accommodation)' : '4. Hotels & Accommodation'}</h3>
+                            <p class="text-gray-600 text-xs leading-relaxed">${isAr ? 'حجوزات في أرقى الفنادق لتلبية تطلعات الراحة والاستجمام.' : 'Reservations in world-class luxury hotels.'}</p>
+                        </div>
+                    </div>
+                    <!-- 5 -->
+                    <div class="bg-white rounded-3xl overflow-hidden shadow-lg border border-gray-100 card-hover transition duration-300">
+                        <img src="https://images.unsplash.com/photo-1549399542-7e3f8b79c341?auto=format&fit=crop&w=600&q=80" class="w-full h-48 object-cover">
+                        <div class="p-6 space-y-2">
+                            <h3 class="text-lg font-extrabold brand-green-text">${isAr ? '5. وسائل النقل (Transportation)' : '5. Transportation'}</h3>
+                            <p class="text-gray-600 text-xs leading-relaxed">${isAr ? 'أسطول من أحدث المركبات الفاخرة المخصصة لنقل المسافرين.' : 'Fleet of luxury vehicles dedicated to passenger transit.'}</p>
+                        </div>
+                    </div>
+                    <!-- 6 -->
+                    <div class="bg-white rounded-3xl overflow-hidden shadow-lg border border-gray-100 card-hover transition duration-300">
+                        <img src="https://images.unsplash.com/photo-1584646098378-0874589d76b1?auto=format&fit=crop&w=600&q=80" class="w-full h-48 object-cover">
+                        <div class="p-6 space-y-2">
+                            <h3 class="text-lg font-extrabold brand-green-text">${isAr ? '6. السياحة الداخلية (Domestic Tourism)' : '6. Domestic Tourism'}</h3>
+                            <p class="text-gray-600 text-xs leading-relaxed">${isAr ? 'تجارب سياحية لاستكشاف التراث والعجائب الطبيعية بالمملكة.' : 'Exploring heritage and natural wonders in Saudi Arabia.'}</p>
+                        </div>
+                    </div>
+                    <!-- 7 -->
+                    <div class="bg-white rounded-3xl overflow-hidden shadow-lg border border-gray-100 card-hover transition duration-300">
+                        <img src="https://images.unsplash.com/photo-1488646953014-85cb44e25828?auto=format&fit=crop&w=600&q=80" class="w-full h-48 object-cover">
+                        <div class="p-6 space-y-2">
+                            <h3 class="text-lg font-extrabold brand-green-text">${isAr ? '7. السياحة الخارجية (International Tourism)' : '7. International Tourism'}</h3>
+                            <p class="text-gray-600 text-xs leading-relaxed">${isAr ? 'برامج سياحية عالمية تساعد المسافرين على استكشاف الوجهات.' : 'Global tourism programs to explore world destinations.'}</p>
+                        </div>
+                    </div>
+                    <!-- 8 -->
+                    <div class="bg-white rounded-3xl overflow-hidden shadow-lg border border-gray-100 card-hover transition duration-300">
+                        <img src="https://images.unsplash.com/photo-1524178232363-1fb2b075b655?auto=format&fit=crop&w=600&q=80" class="w-full h-48 object-cover">
+                        <div class="p-6 space-y-2">
+                            <h3 class="text-lg font-extrabold brand-green-text">${isAr ? '8. تعليم العربية لغير الناطقين بها' : '8. Arabic Education'}</h3>
+                            <p class="text-gray-600 text-xs leading-relaxed">${isAr ? 'برامج تساعد غير الناطقين بالعربية على تعلمها وفهمها.' : 'Educational programs teaching Arabic for non-native speakers.'}</p>
+                        </div>
+                    </div>
+                    <!-- 9 -->
+                    <div class="bg-white rounded-3xl overflow-hidden shadow-lg border border-gray-100 card-hover transition duration-300">
+                        <img src="https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?auto=format&fit=crop&w=600&q=80" class="w-full h-48 object-cover">
+                        <div class="p-6 space-y-2">
+                            <h3 class="text-lg font-extrabold brand-green-text">${isAr ? '9. السياحة العلاجية (Medical Tourism)' : '9. Medical Tourism'}</h3>
+                            <p class="text-gray-600 text-xs leading-relaxed">${isAr ? 'تنسيق الرحلات العلاجية والرعاية الصحية بالتعاون مع المنشآت.' : 'Medical tourism coordination with licensed facilities.'}</p>
+                        </div>
+                    </div>
                 </div>
             </div>
         </section>
 
-        <!-- الهيكلة التنظيمية (12 قسم) -->
-        <section id="structure" class="container mx-auto px-6 py-28 space-y-14">
-            <div class="text-center max-w-2xl mx-auto space-y-3">
-                <h2 class="text-3xl md:text-5xl font-black brand-green-text">${t.structure_title}</h2>
-                <p class="text-gray-600 text-base">${t.structure_subtitle}</p>
+        <!-- الهيكلة 12 قسم -->
+        <section class="container mx-auto px-6 py-20 space-y-8">
+            <div class="text-center max-w-xl mx-auto space-y-2">
+                <h2 class="text-3xl font-black brand-green-text">${isAr ? 'الهيكلة التنظيمية للشركة' : 'Organizational Structure'}</h2>
+                <p class="text-gray-600 text-sm">${isAr ? 'الإدارات والأقسام الإثنا عشر المعتمدة' : 'The 12 approved corporate departments'}</p>
             </div>
-            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-5">
-                ${departmentsList.map(d => `
-                    <div class="bg-white p-6 rounded-2xl shadow-md border border-emerald-900/10 text-center font-bold text-gray-800 text-sm hover:border-[#0F4C3A] hover:bg-emerald-50/50 transition">
-                        🏢 ${d}
-                    </div>
-                `).join('')}
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div class="bg-white p-4 rounded-2xl border shadow-sm text-center font-bold text-xs text-gray-800">1. الإدارة العليا</div>
+                <div class="bg-white p-4 rounded-2xl border shadow-sm text-center font-bold text-xs text-gray-800">2. الإدارة التنفيذية</div>
+                <div class="bg-white p-4 rounded-2xl border shadow-sm text-center font-bold text-xs text-gray-800">3. الموارد البشرية</div>
+                <div class="bg-white p-4 rounded-2xl border shadow-sm text-center font-bold text-xs text-gray-800">4. الإدارة المالية</div>
+                <div class="bg-white p-4 rounded-2xl border shadow-sm text-center font-bold text-xs text-gray-800">5. إدارة المبيعات</div>
+                <div class="bg-white p-4 rounded-2xl border shadow-sm text-center font-bold text-xs text-gray-800">6. إدارة التسويق</div>
+                <div class="bg-white p-4 rounded-2xl border shadow-sm text-center font-bold text-xs text-gray-800">7. خدمة العملاء</div>
+                <div class="bg-white p-4 rounded-2xl border shadow-sm text-center font-bold text-xs text-gray-800">8. إدارة العمليات</div>
+                <div class="bg-white p-4 rounded-2xl border shadow-sm text-center font-bold text-xs text-gray-800">9. إدارة المشتريات</div>
+                <div class="bg-white p-4 rounded-2xl border shadow-sm text-center font-bold text-xs text-gray-800">10. تقنية المعلومات</div>
+                <div class="bg-white p-4 rounded-2xl border shadow-sm text-center font-bold text-xs text-gray-800">11. الإدارة القانونية</div>
+                <div class="bg-white p-4 rounded-2xl border shadow-sm text-center font-bold text-xs text-gray-800">12. الجودة والتطوير</div>
             </div>
         </section>
 
-        <!-- مقياس رضا العملاء -->
-        <section id="feedback" class="bg-[#EAEFEA] py-28 px-6">
-            <div class="max-w-xl mx-auto bg-white p-12 rounded-3xl shadow-2xl border border-emerald-900/10 space-y-6 text-center">
-                <h2 class="text-3xl font-black brand-green-text">${t.feedback_title}</h2>
-                <p class="text-gray-600 text-sm">${t.feedback_desc}</p>
-                <form onsubmit="sendFeedback(event)" class="space-y-5 text-right">
-                    <div>
-                        <label class="block text-xs font-bold text-gray-700 mb-1.5">${lang === 'ar' ? 'تقييم التجربة' : 'Experience Rating'}</label>
-                        <select id="rating" class="w-full p-4 border border-gray-200 rounded-2xl outline-none focus:ring-2 focus:ring-[#0F4C3A] bg-gray-50 text-sm font-semibold">
-                            <option value="5">⭐⭐⭐⭐⭐ ${lang === 'ar' ? 'متاز جداً (Royal Excellence)' : 'Royal Excellence'}</option>
-                            <option value="4">⭐⭐⭐⭐ ${lang === 'ar' ? 'ممتاز (Very Good)' : 'Very Good'}</option>
-                            <option value="3">⭐⭐⭐ ${lang === 'ar' ? 'جيد (Good)' : 'Good'}</option>
-                            <option value="2">⭐⭐ ${lang === 'ar' ? 'مقبول (Fair)' : 'Fair'}</option>
-                            <option value="1">⭐ ${lang === 'ar' ? 'غير راضٍ (Poor)' : 'Poor'}</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block text-xs font-bold text-gray-700 mb-1.5">${lang === 'ar' ? 'ملاحظاتكم أو مقترحاتكم الملكية' : 'Royal Notes or Suggestions'}</label>
-                        <textarea id="notes" placeholder="${lang === 'ar' ? 'اكتب ملاحظاتك هنا...' : 'Write your notes here...'}" rows="3" class="w-full p-4 border border-gray-200 rounded-2xl outline-none focus:ring-2 focus:ring-[#0F4C3A] bg-gray-50 text-sm"></textarea>
-                    </div>
-                    <button type="submit" class="w-full brand-green text-white py-4 rounded-2xl font-black shadow-xl hover:opacity-95 transition text-base">${lang === 'ar' ? 'إرسال التقييم' : 'Submit Feedback'}</button>
+        <!-- تقييم رضا العملاء -->
+        <section class="bg-[#EAEFEA] py-16 px-6">
+            <div class="max-w-xl mx-auto bg-white p-8 rounded-3xl shadow-xl border space-y-4 text-center">
+                <h2 class="text-2xl font-black brand-green-text">${isAr ? 'مقياس رضا العملاء' : 'Feedback Index'}</h2>
+                <form onsubmit="sendFeedback(event)" class="space-y-3 text-right">
+                    <select id="rating" class="w-full p-3 border rounded-xl bg-gray-50 text-sm">
+                        <option value="5">⭐⭐⭐⭐⭐ ممتاز جداً</option>
+                        <option value="4">⭐⭐⭐⭐ ممتاز</option>
+                        <option value="3">⭐⭐⭐ جيد</option>
+                        <option value="2">⭐⭐ مقبول</option>
+                        <option value="1">⭐ غير راضٍ</option>
+                    </select>
+                    <textarea id="notes" placeholder="ملاحظاتكم..." rows="3" class="w-full p-3 border rounded-xl bg-gray-50 text-sm"></textarea>
+                    <button type="submit" class="w-full brand-green text-white py-3 rounded-xl font-bold">إرسال التقييم</button>
                 </form>
-                <div id="msg" class="text-emerald-800 font-bold hidden text-sm bg-emerald-50 p-4 rounded-xl border border-emerald-200"></div>
+                <div id="msg" class="text-emerald-800 font-bold hidden text-sm bg-emerald-50 p-3 rounded-xl"></div>
             </div>
         </section>
 
-        <!-- التذييل الرسمي -->
-        <footer class="bg-[#0A1F18] text-white text-center py-14 px-6 space-y-4">
-            <p class="font-extrabold text-xl tracking-wide">${t.name}</p>
-            <p class="text-gray-400 text-xs tracking-widest uppercase">${t.subtitle} © 2026</p>
+        <footer class="bg-[#0A1F18] text-white text-center py-8 px-6 text-xs space-y-1">
+            <p class="font-bold">الرفادة مسار الضيافة للسفر والسياحة</p>
+            <p class="text-gray-400">AlRifadah Hospitality for Tourism and Travel © 2026</p>
         </footer>
 
         <script>
@@ -301,16 +240,70 @@ app.get('/', (req, res) => {
     `);
 });
 
-// لوحة الإدارة المحمية
+// لوحة التحكم
 app.get('/admin', (req, res) => {
     res.send(`
     <!DOCTYPE html>
     <html lang="ar" dir="rtl">
     <head>
-        <meta charset="UTF-8">
-        <title>لوحة التحكم | الرفادة مسار الضيافة</title>
+        <meta charset="UTF-8"><title>لوحة التحكم</title>
         <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-        <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
-        <style>body { font-family: 'Cairo', sans-serif; background-color: #F8F9FA; }</style>
     </head>
-    <body class="min-h
+    <body class="min-h-screen bg-gray-100 flex items-center justify-center p-6">
+        <div id="login-box" class="bg-white p-8 rounded-3xl shadow-xl border max-w-md w-full space-y-4">
+            <h2 class="text-2xl font-black text-[#0F4C3A] text-center">تسجيل دخول المسؤول</h2>
+            <form onsubmit="login(event)" class="space-y-3">
+                <input type="text" id="user" placeholder="اسم المستخدم" required class="w-full p-3 border rounded-xl bg-gray-50 text-sm">
+                <input type="password" id="pass" placeholder="كلمة المرور" required class="w-full p-3 border rounded-xl bg-gray-50 text-sm">
+                <button type="submit" class="w-full bg-[#0F4C3A] text-white py-3 rounded-xl font-bold">دخول</button>
+            </form>
+        </div>
+        <div id="admin-panel" class="hidden bg-white p-8 rounded-3xl shadow-xl border max-w-2xl w-full space-y-4">
+            <h2 class="text-xl font-bold text-[#0F4C3A]">تقييمات العملاء</h2>
+            <div id="feedback-list" class="space-y-2"></div>
+        </div>
+        <script>
+            async function login(e) {
+                e.preventDefault();
+                const res = await fetch('/api/auth/login', {
+                    method: 'POST',
+                    headers: {'Content-Type':'application/json'},
+                    body: JSON.stringify({username: document.getElementById('user').value, password: document.getElementById('pass').value})
+                });
+                if(res.ok) {
+                    document.getElementById('login-box').classList.add('hidden');
+                    document.getElementById('admin-panel').classList.remove('hidden');
+                    load();
+                } else alert('بيانات غير صحيحة');
+            }
+            async function load() {
+                const res = await fetch('/api/feedback');
+                const data = await res.json();
+                document.getElementById('feedback-list').innerHTML = data.feedback.map(f => \`<div class="p-3 border rounded-xl bg-gray-50">التقييم: \${'⭐'.repeat(f.rating)} - \${f.notes || 'بدون ملاحظات'}\</div>\`).join('');
+            }
+        </script>
+    </body>
+    </html>
+    `);
+});
+
+app.post('/api/auth/login', (req, res) => {
+    const { username, password } = req.body;
+    if (username === 'admin' && password === 'Alrifadah@2026') {
+        res.json({ success: true });
+    } else {
+        res.status(400).json({ success: false });
+    }
+});
+
+app.post('/api/feedback', (req, res) => {
+    const { rating, notes } = req.body;
+    feedbackList.unshift({ rating, notes, created_at: new Date().toISOString() });
+    res.json({ success: true, message: 'شكراً لكم، تم استلام تقييمكم بنجاح.' });
+});
+
+app.get('/api/feedback', (req, res) => {
+    res.json({ feedback: feedbackList });
+});
+
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
