@@ -1,6 +1,7 @@
 {
   "name": "alrifadah-website",
   "version": "1.0.0",
+  "description": "AlRifadah Hospitality Website",
   "main": "server.js",
   "scripts": {
     "start": "node server.js"
@@ -9,6 +10,6 @@
     "express": "^4.19.2"
   },
   "engines": {
-    "node": ">=18.x"
+    "node": "18.x"
   }
 }
