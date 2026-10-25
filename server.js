@@ -28,6 +28,17 @@ app.get('/', (req, res) => {
             .gold-bg { background-color: #D4AF37; }
             .card-glass { background: rgba(17, 41, 34, 0.7); backdrop-filter: blur(12px); border: 1px solid rgba(212, 175, 55, 0.2); }
             .card-hover:hover { transform: translateY(-6px); border-color: rgba(212, 175, 55, 0.6); box-shadow: 0 20px 30px -10px rgba(212, 175, 55, 0.15); }
+            /* تأثير الشعار الثلاثي الأبعاد 3D الفاخر */
+            .logo-3d {
+                background: linear-gradient(145deg, #ffffff, #e6e6e6);
+                box-shadow: 0 10px 20px rgba(0,0,0,0.4), inset 0 2px 3px rgba(255,255,255,0.8), inset 0 -2px 3px rgba(0,0,0,0.2);
+                border: 2px solid #D4AF37;
+                transform: perspective(500px) rotateX(5deg);
+                transition: transform 0.3s ease;
+            }
+            .logo-3d:hover {
+                transform: perspective(500px) rotateX(0deg) scale(1.05);
+            }
         </style>
     </head>
     <body class="min-h-screen flex flex-col">
@@ -36,16 +47,17 @@ app.get('/', (req, res) => {
         <header class="bg-[#0B1311]/95 backdrop-blur-md sticky top-0 z-50 border-b border-[#D4AF37]/20">
             <div class="container mx-auto px-6 py-4 flex justify-between items-center">
                 <div class="flex items-center gap-4">
-                    <div class="w-14 h-14 bg-white rounded-2xl p-1.5 shadow-lg border border-[#D4AF37]/30 flex items-center justify-center overflow-hidden">
+                    <!-- شعار 3D بارز وواضح -->
+                    <div class="w-16 h-16 logo-3d rounded-2xl p-1.5 flex items-center justify-center overflow-hidden">
                         ${customLogo ? `<img src="${customLogo}" class="w-full h-full object-contain">` : `
                         <div class="text-center leading-tight">
-                            <span class="text-[#0F4C3A] font-black text-xs block">الرفادة</span>
-                            <span class="text-[7px] text-gray-600 block">مسار الضيافة</span>
+                            <span class="text-[#0F4C3A] font-black text-xs block drop-shadow-sm">الرفادة</span>
+                            <span class="text-[7px] text-gray-700 font-bold block">مسار الضيافة</span>
                         </div>`}
                     </div>
                     <div>
                         <h1 class="font-black text-xs md:text-sm text-white tracking-tight">${isAr ? 'الرفادة مسار الضيافة للسفر والسياحة' : 'AlRifadah Hospitality'}</h1>
-                        <p class="text-[9px] gold-text tracking-widest uppercase">Tourism and Travel</p>
+                        <p class="text-[9px] gold-text tracking-widest uppercase font-bold">Tourism and Travel</p>
                     </div>
                 </div>
                 <div class="flex items-center gap-3">
