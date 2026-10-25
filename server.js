@@ -1,103 +1,183 @@
 const express = require('express');
-const path = require('path');
-const fs = require('fs');
-
 const app = express();
 const PORT = process.env.PORT || 3000;
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// مجلد الملفات والرفع
-const publicDir = path.join(__dirname, 'public');
-const uploadDir = path.join(publicDir, 'uploads');
-if (!fs.existsSync(uploadDir)) {
-    fs.mkdirSync(uploadDir, { recursive: true });
-}
-
-app.use(express.static(publicDir));
-
-// تخزين بسيط ومستقر للبيانات والتقييمات
-let feedbackList = [];
+// بيانات أولية
 let siteSettings = {
     about_us: {
-        ar: "نحن شركة رائدة في قطاع السفر والسياحة والضيافة، نقدم خدمات متكاملة بمعايير عالمية تجمع بين الاصالة والاحترافية.",
-        en: "We are a leading company in travel, tourism, and hospitality, providing integrated services with global standards."
+        ar: "شركة الرفادة مسار الضيافة للسفر والسياحة - شركة رائدة توفر خدمات السفر والضيافة الشاملة مع حلول مميزة ومخصصة للعملاء.",
+        en: "AlRifadah Hospitality for Tourism & Travel - A leading travel and hospitality company providing comprehensive services."
     },
     mission: {
-        ar: "تقديم تجارب سفر وضيافة استثنائية تلبي تطلعات عملائنا بأعلى مستويات الجودة والموثوقية.",
-        en: "Delivering exceptional travel and hospitality experiences that meet our clients aspirations."
+        ar: "تقديم خدمات سفر وضيافة استثنائية بمعايير عالمية تجمع بين الاصالة والاحترافية.",
+        en: "Delivering exceptional travel and hospitality services with world-class standards."
     }
 };
 
-// API Endpoints
-app.get('/api/settings', (req, res) => {
-    res.json(siteSettings);
-});
+let feedbackList = [];
 
-app.post('/api/settings', (req, res) => {
-    const { key, value_ar, value_en } = req.body;
-    if (siteSettings[key]) {
-        siteSettings[key].ar = value_ar;
-        siteSettings[key].en = value_en;
-    } else {
-        siteSettings[key] = { ar: value_ar, en: value_en };
-    }
-    res.json({ success: true, message: 'تم التحديث بنجاح' });
-});
-
-app.get('/api/services', (req, res) => {
-    res.json([
-        { id: 1, title_ar: "الاستقبال", title_en: "Meet & Assist", desc_ar: "خدمات استقبال منظمة لتوفير بداية مريحة للرحلة.", desc_en: "Organized reception services for a comfortable journey start.", image: "/uploads/logo.png" },
-        { id: 2, title_ar: "التوديع", title_en: "Departure Assistance", desc_ar: "مساندة للمسافرين لتنظيم المغادرة وتسهيل التنقل.", desc_en: "Assistance for travelers to organize departures.", image: "/uploads/logo.png" },
-        { id: 3, title_ar: "الطيران", title_en: "Flight Services", desc_ar: "خدمات مرتبطة بتنظيم السفر الجوي وخيارات الرحلات.", desc_en: "Services related to organizing air travel.", image: "/uploads/logo.png" },
-        { id: 4, title_ar: "الفنادق", title_en: "Hotels & Accommodation", desc_ar: "خيارات إقامة متنوعة تهتم براحة المسافرين.", desc_en: "Various accommodation options for travelers comfort.", image: "/uploads/logo.png" },
-        { id: 5, title_ar: "وسائل النقل", title_en: "Transportation", desc_ar: "خدمات نقل تساعد المسافرين للوصول لوجهاتهم براحة.", desc_en: "Transportation services to reach destinations comfortably.", image: "/uploads/logo.png" },
-        { id: 6, title_ar: "السياحة الداخلية", title_en: "Domestic Tourism", desc_ar: "تجارب سياحية داخل المملكة لاستكشاف التراث والطبيعة.", desc_en: "Tourism experiences inside the Kingdom.", image: "/uploads/logo.png" },
-        { id: 7, title_ar: "السياحة الخارجية", title_en: "International Tourism", desc_ar: "تجارب سياحية خارج المملكة لاستكشاف وجهات متنوعة.", desc_en: "Tourism experiences outside the Kingdom.", image: "/uploads/logo.png" },
-        { id: 8, title_ar: "تعليم العربية", title_en: "Arabic Education", desc_ar: "برامج تعليمية لغير الناطقين باللغة العربية.", desc_en: "Educational programs for non-native speakers.", image: "/uploads/logo.png" },
-        { id: 9, title_ar: "السياحة العلاجية", title_en: "Medical Tourism", desc_ar: "خدمات تنسيق للرحلات المرتبطة بالعلاج والرعاية الصحية.", desc_en: "Coordination services for medical trips.", image: "/uploads/logo.png" }
-    ]);
-});
-
-app.get('/api/structure', (req, res) => {
-    res.json([
-        { name_ar: "الإدارة العليا", name_en: "Top Management" },
-        { name_ar: "الإدارة التنفيذية", name_en: "Executive Management" },
-        { name_ar: "إدارة الموارد البشرية", name_en: "Human Resources" },
-        { name_ar: "الإدارة المالية والمحاسبة", name_en: "Finance & Accounting" },
-        { name_ar: "إدارة المبيعات", name_en: "Sales Department" },
-        { name_ar: "إدارة التسويق", name_en: "Marketing Department" },
-        { name_ar: "إدارة خدمة العملاء", name_en: "Customer Service" },
-        { name_ar: "إدارة العمليات", name_en: "Operations Department" },
-        { name_ar: "إدارة المشتريات", name_en: "Procurement Department" },
-        { name_ar: "إدارة تقنية المعلومات", name_en: "IT Department" },
-        { name_ar: "الإدارة القانونية والامتثال", name_en: "Legal & Compliance" },
-        { name_ar: "إدارة الجودة والتطوير", name_en: "Quality & Development" }
-    ]);
-});
-
+// API
+app.get('/api/settings', (req, res) => res.json(siteSettings));
+app.get('/api/feedback', (req, res) => res.json(feedbackList));
 app.post('/api/feedback', (req, res) => {
-    const { rating, notes } = req.body;
-    feedbackList.unshift({ rating, notes, created_at: new Date().toISOString() });
-    res.json({ success: true, message: 'شكراً لك، تم استلام تقييمك بنجاح.' });
+    feedbackList.unshift(req.body);
+    res.json({ success: true, message: 'تم استلام تقييمك بنجاح!' });
 });
-
-app.get('/api/feedback', (req, res) => {
-    const total = feedbackList.length;
-    const avg = total > 0 ? feedbackList.reduce((acc, curr) => acc + curr.rating, 0) / total : 5;
-    res.json({ feedback: feedbackList, stats: { avg_rating: avg, total_count: total } });
-});
-
 app.post('/api/auth/login', (req, res) => {
     const { username, password } = req.body;
     if (username === 'admin' && password === 'Alrifadah@2026') {
-        res.json({ success: true, message: 'تم تسجيل الدخول بنجاح' });
+        res.json({ success: true });
     } else {
-        res.status(400).json({ success: false, message: 'بيانات الدخول غير صحيحة' });
+        res.status(400).json({ success: false, message: 'اسم المستخدم أو كلمة المرور غير صحيحة' });
     }
 });
 
-app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
+// الصفحة الرئيسية للموقع (تُعرض تلقائياً عند فتح الرابط)
+app.get('/', (req, res) => {
+    res.send(`
+    <!DOCTYPE html>
+    <html lang="ar" dir="rtl">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>الرفادة مسار الضيافة للسفر والسياحة</title>
+        <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+        <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
+        <style>body { font-family: 'Cairo', sans-serif; background-color: #f8f9fa; }</style>
+    </head>
+    <body class="min-h-screen flex flex-col">
+        <!-- شريط علوي -->
+        <header class="bg-[#0F4C3A] text-white p-4 shadow-lg flex justify-between items-center">
+            <h1 class="text-xl font-bold">الرفادة مسار الضيافة للسفر والسياحة</h1>
+            <a href="/admin" class="text-xs bg-white text-[#0F4C3A] font-bold px-3 py-2 rounded-lg">لوحة الإدارة</a>
+        </header>
+
+        <!-- الواجهة الرئيسية -->
+        <main class="container mx-auto p-6 flex-grow space-y-8">
+            <div class="bg-[#0F4C3A] text-white p-10 rounded-3xl text-center space-y-4 shadow-xl">
+                <h2 class="text-3xl font-extrabold">أهلاً بكم في الرفادة مسار الضيافة</h2>
+                <p class="text-gray-200">بوابتك الفاخرة لخدمات السفر والسياحة والضيافة المتكاملة.</p>
+            </div>
+
+            <!-- من نحن -->
+            <div class="bg-white p-6 rounded-2xl shadow border space-y-3">
+                <h3 class="text-2xl font-bold text-[#0F4C3A]">من نحن</h3>
+                <p class="text-gray-700">${siteSettings.about_us.ar}</p>
+                <h4 class="text-lg font-bold text-[#0F4C3A] pt-2">رسالة الشركة</h4>
+                <p class="text-gray-700">${siteSettings.mission.ar}</p>
+            </div>
+
+            <!-- الخدمات 9 -->
+            <div class="space-y-4">
+                <h3 class="text-2xl font-bold text-[#0F4C3A] text-center">خدماتنا</h3>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div class="bg-white p-4 rounded-xl border shadow text-center font-bold text-[#0F4C3A]">1. الاستقبال (Meet & Assist)</div>
+                    <div class="bg-white p-4 rounded-xl border shadow text-center font-bold text-[#0F4C3A]">2. التوديع (Departure Assistance)</div>
+                    <div class="bg-white p-4 rounded-xl border shadow text-center font-bold text-[#0F4C3A]">3. الطيران (Flight Services)</div>
+                    <div class="bg-white p-4 rounded-xl border shadow text-center font-bold text-[#0F4C3A]">4. الفنادق (Hotels & Accommodation)</div>
+                    <div class="bg-white p-4 rounded-xl border shadow text-center font-bold text-[#0F4C3A]">5. وسائل النقل (Transportation)</div>
+                    <div class="bg-white p-4 rounded-xl border shadow text-center font-bold text-[#0F4C3A]">6. السياحة الداخلية (Domestic Tourism)</div>
+                    <div class="bg-white p-4 rounded-xl border shadow text-center font-bold text-[#0F4C3A]">7. السياحة الخارجية (International Tourism)</div>
+                    <div class="bg-white p-4 rounded-xl border shadow text-center font-bold text-[#0F4C3A]">8. تعليم العربية لغير الناطقين بها</div>
+                    <div class="bg-white p-4 rounded-xl border shadow text-center font-bold text-[#0F4C3A]">9. السياحة العلاجية (Medical Tourism)</div>
+                </div>
+            </div>
+
+            <!-- تقييم العملاء -->
+            <div class="bg-white p-6 rounded-2xl shadow border text-center space-y-4 max-w-lg mx-auto">
+                <h3 class="text-xl font-bold text-[#0F4C3A]">تقييم رضا العملاء</h3>
+                <form onsubmit="sendFeedback(event)" class="space-y-3">
+                    <select id="rating" class="w-full p-2 border rounded-lg">
+                        <option value="5">⭐⭐⭐⭐⭐ ممتاز جدًا</option>
+                        <option value="4">⭐⭐⭐⭐ ممتاز</option>
+                        <option value="3">⭐⭐⭐ جيد</option>
+                        <option value="2">⭐⭐ مقبول</option>
+                        <option value="1">⭐ غير راضٍ</option>
+                    </select>
+                    <textarea id="notes" placeholder="ملاحظاتك..." class="w-full p-2 border rounded-lg"></textarea>
+                    <button type="submit" class="w-full bg-[#0F4C3A] text-white py-2 rounded-lg font-bold">إرسال التقييم</button>
+                </form>
+                <div id="msg" class="text-green-600 font-bold hidden"></div>
+            </div>
+        </main>
+
+        <footer class="bg-gray-900 text-white text-center p-4 text-sm">
+            الرفادة مسار الضيافة للسفر والسياحة © 2026
+        </footer>
+
+        <script>
+            async function sendFeedback(e) {
+                e.preventDefault();
+                const rating = document.getElementById('rating').value;
+                const notes = document.getElementById('notes').value;
+                const res = await fetch('/api/feedback', {
+                    method: 'POST',
+                    headers: {'Content-Type':'application/json'},
+                    body: JSON.stringify({rating, notes})
+                });
+                const data = await res.json();
+                document.getElementById('msg').innerText = data.message;
+                document.getElementById('msg').classList.remove('hidden');
+            }
+        </script>
+    </body>
+    </html>
+    `);
 });
+
+// صفحة لوحة الإدارة
+app.get('/admin', (req, res) => {
+    res.send(`
+    <!DOCTYPE html>
+    <html lang="ar" dir="rtl">
+    <head>
+        <meta charset="UTF-8">
+        <title>لوحة التحكم | الرفادة</title>
+        <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    </head>
+
+    <body class="bg-gray-100 p-6">
+        <div id="login" class="max-w-md mx-auto bg-white p-6 rounded-2xl shadow space-y-4 mt-20">
+            <h2 class="text-xl font-bold text-[#0F4C3A] text-center">تسجيل دخول المسؤول</h2>
+            <form onsubmit="login(event)" class="space-y-3">
+                <input type="text" id="user" placeholder="اسم المستخدم" required class="w-full p-2 border rounded">
+                <input type="password" id="pass" placeholder="كلمة المرور" required class="w-full p-2 border rounded">
+                <button type="submit" class="w-full bg-[#0F4C3A] text-white py-2 rounded font-bold">دخول</button>
+            </form>
+        </div>
+
+        <div id="panel" class="hidden max-w-2xl mx-auto bg-white p-6 rounded-2xl shadow space-y-4">
+            <h2 class="text-2xl font-bold text-[#0F4C3A]">لوحة التحكم - تقييمات العملاء</h2>
+            <div id="list" class="space-y-2"></div>
+        </div>
+
+        <script>
+            async function login(e) {
+                e.preventDefault();
+                const res = await fetch('/api/auth/login', {
+                    method: 'POST',
+                    headers: {'Content-Type':'application/json'},
+                    body: JSON.stringify({username: document.getElementById('user').value, password: document.getElementById('pass').value})
+                });
+                if(res.ok) {
+                    document.getElementById('login').classList.add('hidden');
+                    document.getElementById('panel').classList.remove('hidden');
+                    load();
+                } else alert('بيانات خاطئة');
+            }
+            async function load() {
+                const res = await fetch('/api/feedback');
+                const data = await res.json();
+                const list = document.getElementById('list');
+                list.innerHTML = data.map(f => \`<div class="p-3 border rounded">التقييم: \${f.rating} ⭐ - الملاحظات: \${f.notes || 'لا يوجد'}\</div>\`).join('');
+            }
+        </script>
+    </body>
+    </html>
+    `);
+});
+
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
